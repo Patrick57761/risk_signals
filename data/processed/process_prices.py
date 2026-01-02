@@ -14,11 +14,7 @@ def load_prices(ticker: str) -> pd.DataFrame:
     return df
 
 def process_prices(df: pd.DataFrame) -> pd.DataFrame:
-    df = df[["Close", "Volume"]]
-    df = df.rename(columns = {
-        "Close": "close",
-        "Volume": "volume"
-    })
+    # no processing needed
     return df
 
 def save_processed(df: pd.DataFrame, ticker: str) -> None:
