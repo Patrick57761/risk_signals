@@ -10,7 +10,7 @@ def ema(price: pd.Series, window: int) -> pd.Series:
     return price.ewm(span=window, adjust=False).mean() # exponentially weighted moving
 
 # Relative Strength Index
-def rsi(price: pd.Series, window: int) -> pd.Series:
+def rsi(price: pd.Series, window: int = 14) -> pd.Series:
     delta = price.diff()
 
     gains = delta.clip(lower=0) 
