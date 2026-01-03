@@ -8,7 +8,7 @@ def main():
     parser.add_argument("--ticker", default="XLK")
     args = parser.parse_args()
 
-    df = get_prices(args.ticker, start="2015-01-01")
+    df = get_prices(args.ticker, start="2016-01-01")
     prices = df["Close"]
 
     signals = summary(prices)
