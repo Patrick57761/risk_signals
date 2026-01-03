@@ -18,9 +18,10 @@ def trend_state(price: pd.Series, fast_window: int = 50, slow_window: int = 200)
     fast = sma(price, fast_window)
     slow = sma(price, slow_window)
 
-    state = pd.Series(0, index=price.index)
+    state = pd.Series(index=price.index, dtype="float")
     state[fast > slow] = 1
     state[fast < slow] = -1
+    state[fast == slow] = 0
 
     return state
 
@@ -28,9 +29,10 @@ def trend_state(price: pd.Series, fast_window: int = 50, slow_window: int = 200)
 def momentum_state(price: pd.Series, window: int = 14, upper: int = 70, lower: int = 30) -> pd.Series:
     momentum = rsi(price, window)
 
-    state = pd.Series(0, index=momentum.index)
+    state = pd.Series(index=price.index, dtype="float")
     state[momentum > upper] = 1
     state[momentum < lower] = -1
+    state[(momentum <= upper) & (momentum >= lower)] = 0
 
     return state
 
