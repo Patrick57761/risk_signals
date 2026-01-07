@@ -26,6 +26,8 @@ def sector_signals(ticker: str):
             "volatility_regime": float(latest["volatility_regime"]),
             "trend_state": int(latest["trend_state"]),
             "momentum_state": int(latest["momentum_state"]),
+            "trend_strength": float(latest["trend_strength"]),
+            "momentum_strength": float(latest["momentum_strength"])
         }
 
     except Exception as e:
