@@ -3,13 +3,22 @@ from pathlib import Path
 import yfinance as yf
 import pandas as pd
 
+from functools import lru_cache
+from backend.app.utils.cache_time import current_macro_date
+
 REQUIRED_COLUMNS = ["Date", "Volume", "High", "Low", "Open", "Close"]
 
-def get_prices(ticker: str, start: str = "2016-01-01") -> pd.DataFrame:
-    df = yf.download(ticker, start = start, progress = False)
+@lru_cache(maxsize=140)
+def fetch_prices(ticker: str, macro_date: str) -> pd.DataFrame:
+    df = yf.download(ticker, start = "2016-01-01", progress = False)
     df.reset_index(inplace=True)
     df.columns = df.columns.get_level_values(0)
+    validate_prices(df)
     return df
+
+def get_prices(ticker: str) -> pd.DataFrame:
+    macro_date = current_macro_date()
+    return fetch_prices(ticker, macro_date)
 
 def validate_prices(df: pd.DataFrame) -> None:
     # Check empty

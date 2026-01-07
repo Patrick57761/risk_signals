@@ -16,7 +16,7 @@ def health():
 @app.get("/sector/{ticker}")
 def sector_signals(ticker: str):
     try:
-        df = get_prices(ticker, start="2016-01-01")
+        df = get_prices(ticker)
         df = df.set_index("Date")
         prices = df["Close"]
         signals = summary(prices).dropna()

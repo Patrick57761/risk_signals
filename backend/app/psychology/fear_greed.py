@@ -1,6 +1,7 @@
 import requests
-from datetime import datetime, timezone
 from functools import lru_cache
+
+from backend.app.utils.cache_time import current_macro_date
 
 # https://edition.cnn.com/markets/fear-and-greed
 CNN_FEAR_GREED_URL = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata"
@@ -30,8 +31,8 @@ HEADERS = {
     "Referer": "https://edition.cnn.com/markets/fear-and-greed",
 }
 
-@lru_cache(maxsize=1)
-def get_fear_greed_index() -> dict:
+@lru_cache(maxsize=14)
+def fetch_fear_greed(macro_date: str) -> dict:
     response = requests.get(CNN_FEAR_GREED_URL, headers=HEADERS, timeout=5)
     response.raise_for_status()
     data = response.json()
@@ -44,3 +45,8 @@ def get_fear_greed_index() -> dict:
         "label": label,
         "source": "CNN"
     }
+
+def get_fear_greed_index() -> dict:
+    macro_date = current_macro_date()
+
+    return fetch_fear_greed(macro_date)
