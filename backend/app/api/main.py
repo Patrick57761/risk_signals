@@ -15,6 +15,7 @@ def health():
 def sector_signals(ticker: str):
     try:
         df = get_prices(ticker, start="2016-01-01")
+        df = df.set_index("Date")
         prices = df["Close"]
 
         signals = summary(prices).dropna()
@@ -23,8 +24,8 @@ def sector_signals(ticker: str):
         risk_score = technical_risk_score(latest)
 
         return {
-            "ticker": ticker.upper(),
-            "date": str(latest.name),
+            "ticker": str(ticker.upper()),
+            "date": str(latest.name.date().isoformat()),
             "technical_risk_score": float(risk_score),
             "volatility_regime": float(latest["volatility_regime"]),
             "trend_state": int(latest["trend_state"]),
