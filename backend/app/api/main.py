@@ -1,7 +1,7 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException # type: ignore
 
 from backend.app.ingestion.market_data import get_prices
-from backend.app.analytics.signals import summary
+from backend.app.analytics.signals import summary, technical_risk_score
 
 app = FastAPI(title="Risk Signals API")
 
@@ -20,9 +20,12 @@ def sector_signals(ticker: str):
         signals = summary(prices).dropna()
         latest = signals.iloc[-1]
 
+        risk_score = technical_risk_score(latest)
+
         return {
             "ticker": ticker.upper(),
             "date": str(latest.name),
+            "technical_risk_score": float(risk_score),
             "volatility_regime": float(latest["volatility_regime"]),
             "trend_state": int(latest["trend_state"]),
             "momentum_state": int(latest["momentum_state"]),
