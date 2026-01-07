@@ -4,7 +4,6 @@ from functools import lru_cache
 
 # https://edition.cnn.com/markets/fear-and-greed
 CNN_FEAR_GREED_URL = "https://production.dataviz.cnn.io/index/fearandgreed/graphdata"
-
 """
 
 {
@@ -21,9 +20,19 @@ CNN_FEAR_GREED_URL = "https://production.dataviz.cnn.io/index/fearandgreed/graph
 
   """
 
+HEADERS = {
+    "User-Agent": (
+        "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/120.0.0.0 Safari/537.36"
+    ),
+    "Accept": "application/json",
+    "Referer": "https://edition.cnn.com/markets/fear-and-greed",
+}
+
 @lru_cache(maxsize=1)
 def get_fear_greed_index() -> dict:
-    response = requests.get(CNN_FEAR_GREED_URL, timeout=5)
+    response = requests.get(CNN_FEAR_GREED_URL, headers=HEADERS, timeout=5)
     response.raise_for_status()
     data = response.json()
 
@@ -33,6 +42,5 @@ def get_fear_greed_index() -> dict:
     return {
         "value": int(latest),
         "label": label,
-        "as_of_date": datetime.now(timezone.utc).isoformat(),
         "source": "CNN"
     }
