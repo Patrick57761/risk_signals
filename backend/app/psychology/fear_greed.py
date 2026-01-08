@@ -50,3 +50,7 @@ def get_fear_greed_index() -> dict:
     macro_date = current_macro_date()
 
     return fetch_fear_greed(macro_date)
+
+# Scale from 0-100 to -100 100
+def fear_greed_scale(value: int) -> float:
+    return (value - 50) * 2

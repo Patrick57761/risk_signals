@@ -2,8 +2,9 @@ from fastapi import FastAPI, HTTPException # type: ignore
 
 from backend.app.ingestion.market_data import get_prices
 from backend.app.analytics.signals import summary, technical_risk_score
+from backend.app.analytics.final_score import final_score
 
-from backend.app.psychology.fear_greed import get_fear_greed_index
+from backend.app.psychology.fear_greed import get_fear_greed_index, fear_greed_scale
 
 app = FastAPI(title="Risk Signals API")
 
@@ -16,14 +17,21 @@ def health():
 @app.get("/sector/{ticker}")
 def sector_signals(ticker: str):
     try:
+        # market data
         df = get_prices(ticker)
         df = df.set_index("Date")
         prices = df["Close"]
+
+        # technical signals
         signals = summary(prices).dropna()
         latest = signals.iloc[-1]
         risk_score = technical_risk_score(latest)
 
+        # fear greed
         fear_greed = get_fear_greed_index()
+
+        # combined score
+        final = final_score(risk_score, fear_greed_scale(fear_greed["value"]))
 
         return {
             "ticker": ticker.upper(),
@@ -40,7 +48,9 @@ def sector_signals(ticker: str):
 
             "psychology": {
                 "fear_greed": fear_greed
-            }
+            },
+
+            "final_score": final
         }
 
     except Exception as e:

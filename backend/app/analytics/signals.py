@@ -57,9 +57,11 @@ def summary(price: pd.Series) -> pd.DataFrame:
         }
     )
 
+# -100 to 100
 def technical_risk_score(row: pd.Series) -> float:
     vol_norm = min(row["volatility_regime"] / 2, 1)
-    trend_norm = min(abs(row["trend_strength"]) / 0.05, 1)
-    momentum_norm = min(abs(row["momentum_strength"]),1)
-    score = 0.4 * vol_norm + 0.3 * trend_norm + 0.3 * momentum_norm
+    trend_norm = max(min(row["trend_strength"] / 0.05, 1), -1)
+    momentum_norm = max(min(row["momentum_strength"] / 0.05, 1), -1)
+    direction = 0.6 * trend_norm + 0.4 * momentum_norm
+    score = direction * vol_norm
     return 100 * score
